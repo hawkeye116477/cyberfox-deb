@@ -1,0 +1,9 @@
+This package was debianized by hawkeye116477 <hawkeye116477@gmail.com>.
+
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Cyberfox Web Browser
+Source: https://sourceforge.net/projects/cyberfox
+
+Files: *
+Copyright: Copyright 2017 All rights belongs to 8pecxstudios <8pecxstudios.com> and other respective owners.
+License: MPL-2.0

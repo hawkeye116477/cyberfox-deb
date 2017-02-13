@@ -7,9 +7,9 @@ cd $Dir
 VERSION=""
 
 function finalCleanUp(){
-    if [ -d "$Dir/deb_ppa" ]; then
-        echo "Clean: $Dir/deb_ppa"
-        rm -rf $Dir/deb_ppa
+    if [ -d "$Dir/tmp" ]; then
+        echo "Clean: $Dir/tmp"
+        rm -rf $Dir/tmp
 		rm -rf $Dir/version
     fi
 }
@@ -30,47 +30,35 @@ fi
 
 
 # Generate template directories
-if [ ! -d "$Dir/deb_ppa" ]; then 
-    mkdir $Dir/deb_ppa
-    mkdir $Dir/deb_ppa/cyberfox-$VERSION
-    mkdir $Dir/deb_ppa/cyberfox-$VERSION/debian 
-    mkdir $Dir/deb_ppa/cyberfox-$VERSION/usr
-    mkdir $Dir/deb_ppa/cyberfox-$VERSION/usr/lib
-    mkdir $Dir/deb_ppa/cyberfox-$VERSION/usr/share
-    mkdir $Dir/deb_ppa/cyberfox-$VERSION/usr/share/applications
-    mkdir $Dir/deb_ppa/cyberfox-$VERSION/usr/share/lintian
-	mkdir $Dir/deb_ppa/cyberfox-$VERSION/usr/share/lintian/overrides
+if [ ! -d "$Dir/tmp" ]; then 
+    mkdir $Dir/tmp
+    mkdir $Dir/tmp/cyberfox-$VERSION
 	fi
 
 
 # Copy DEB and PPA templates
 if [ -d "$Dir/ppa_templates/debian" ]; then
-	cp -r $Dir/ppa_templates/debian/* $Dir/deb_ppa/cyberfox-$VERSION/debian
+	cp -r $Dir/ppa_templates/debian/ $Dir/tmp/cyberfox-$VERSION/
 else
     echo "Unable to locate ppa templates!"
     exit 1 
 fi
 
 # Copy latest build
-	cd $Dir/deb_ppa/cyberfox-$VERSION/usr/lib
-	wget https://kent.dl.sourceforge.net/project/cyberfox/Zipped%20Format/Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
+	cd $Dir/tmp/cyberfox-$VERSION
+	wget https://sourceforge.net/projects/cyberfox/files/Zipped%20Format/Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
 	tar jxf Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
-	if [ -d "$Dir/deb_ppa/cyberfox-$VERSION/usr/lib/Cyberfox" ]; then
-	rm -rf $Dir/deb_ppa/cyberfox-$VERSION/usr/lib/Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
-	rm -rf $Dir/deb_ppa/cyberfox-$VERSION/usr/lib/README.txt
-	mv $Dir/deb_ppa/cyberfox-$VERSION/usr/lib/Cyberfox/browser/features $Dir/deb_ppa/cyberfox-$VERSION
-	cp $Dir/ppa_templates/cyberfox.desktop $Dir/deb_ppa/cyberfox-$VERSION/usr/share/applications
-	cp $Dir/ppa_templates/Cyberfox $Dir/deb_ppa/cyberfox-$VERSION/usr/share/lintian/overrides
-    cp $Dir/ppa_templates/Cyberfox.sh $Dir/deb_ppa/cyberfox-$VERSION
-	cp $Dir/ppa_templates/vendor-gre.js $Dir/deb_ppa/cyberfox-$VERSION
-	cp $Dir/ppa_templates/vendor-cyberfox.js $Dir/deb_ppa/cyberfox-$VERSION
+	if [ -d "$Dir/tmp/cyberfox-$VERSION/Cyberfox" ]; then
+	rm -rf $Dir/tmp/cyberfox-$VERSION/README.txt
+	mv $Dir/tmp/cyberfox-$VERSION/Cyberfox/browser/features $Dir/tmp/cyberfox-$VERSION
 else
     echo "Unable to Cyberfox package files, Please check the build was created and packaged successfully!"
     exit 1     
 fi
 
+
 # Generate change log template
-CHANGELOGDIR=$Dir/deb_ppa/cyberfox-$VERSION/debian/changelog
+CHANGELOGDIR=$Dir/tmp/cyberfox-$VERSION/debian/changelog
 if grep -q -E "__VERSION__|__CHANGELOG__|__TIMESTAMP__" "$CHANGELOGDIR" ; then
     sed -i "s|__VERSION__|$VERSION|" "$CHANGELOGDIR"
 
@@ -83,31 +71,27 @@ else
 fi
 
 # Make sure correct permissions are set
-chmod  755 $Dir/deb_ppa/cyberfox-$VERSION/debian/control
-chmod  755 $Dir/deb_ppa/cyberfox-$VERSION/debian/cyberfox.prerm
-chmod  755 $Dir/deb_ppa/cyberfox-$VERSION/debian/cyberfox.postinst
-chmod 755 $Dir/deb_ppa/cyberfox-$VERSION/debian/rules
+chmod  755 $Dir/tmp/cyberfox-$VERSION/debian/cyberfox.prerm
+chmod  755 $Dir/tmp/cyberfox-$VERSION/debian/cyberfox.postinst
+chmod 755 $Dir/tmp/cyberfox-$VERSION/debian/rules
+chmod 755 $Dir/tmp/cyberfox-$VERSION/debian/Cyberfox.sh
 
-# Make symlinks
-#ln -s /usr/lib/Cyberfox/Cyberfox.sh $Dir/deb_ppa/cyberfox-$VERSION/cyberfox
-#ln -s /usr/lib/Cyberfox/browser/icons/mozicon128.png $Dir/deb_ppa/cyberfox-$VERSION/Cyberfox.png
 
 # Linux has hunspell dictionaries, so we can remove Cyberfox dictionaries and make symlink to Linux dictionaries. 
 # Thanks to this, we don't have to download dictionary from AMO for our language.
-rm -rf $Dir/deb_ppa/cyberfox-$VERSION/usr/lib/Cyberfox/dictionaries
-#ln -s /usr/share/hunspell $Dir/deb_ppa/cyberfox-$VERSION/usr/lib/Cyberfox/dictionaries
+rm -rf $Dir/tmp/cyberfox-$VERSION/Cyberfox/dictionaries
 
 # Build .deb package (Requires devscripts to be installed sudo apt install devscripts)
 notify-send "Building deb package!"
 debuild -us -uc 
-#if [ -f $Dir/deb_ppa/cyberfox_*_amd64.deb ]; then
-#    mv $Dir/deb_ppa/cyberfox_*_amd64.deb $Dir/debs
+#if [ -f $Dir/tmp/cyberfox_*_amd64.deb ]; then
+#    mv $Dir/tmp/cyberfox_*_amd64.deb $Dir/debs
 #else
- #  echo "Unable to move $Dir/deb_ppa/cyberfox_*_amd64.deb the file maybe missing or had errors during creation!"
+ #  echo "Unable to move $Dir/tmp/cyberfox_*_amd64.deb the file maybe missing or had errors during creation!"
   # exit 1
 #fi
-if [ -f $Dir/deb_ppa/*.deb ]; then
-    mv $Dir/deb_ppa/*.deb $Dir/debs
+if [ -f $Dir/tmp/cyberfox_*_amd64.deb ]; then
+    mv $Dir/tmp/*.deb $Dir/debs
 else
     echo "Unable to move deb packages the file maybe missing or had errors during creation!"
    exit 1

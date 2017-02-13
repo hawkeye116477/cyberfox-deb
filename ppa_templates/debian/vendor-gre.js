@@ -6,3 +6,6 @@ pref("distribution.searchplugins.defaultLocale", "en-US");
 
 // Enable Network Manager integration
 pref("network.manage-offline-status", true);
+
+//Disable Pocket extension
+pref("extensions.pocket.enabled", false);
