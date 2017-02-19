@@ -1,0 +1,12 @@
+Template: cyberfox-release/add-deb-source
+Type: boolean
+Default: true
+Description: Do you want to update Cyberfox together with the rest of the system?
+ Cyberfox can configure your system to include new versions of the Cyberfox
+ package together with the regular system upgrades. Enabling this option
+ is highly recommended to make sure you receive critical security
+ updates in a timely manner.
+ .
+ If you agree, Cyberfox will install a file into /etc/apt/sources.list.d,
+ so that the Cyberfox package is upgraded to any available newer release
+ as part of your regular system upgrade.

@@ -1,1 +1,2 @@
 /features/firefox@getpocket.com.xpi /usr/lib/Cyberfox/browser/features
+debian/pocket.js /usr/lib/Cyberfox/defaults/pref
