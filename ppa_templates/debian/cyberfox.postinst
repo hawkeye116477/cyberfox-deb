@@ -1,61 +1,11 @@
 #!/bin/sh
 
-. /usr/share/debconf/confmodule
-
 set -e
 
 UPDATENOTIFIERDIR=/var/lib/update-notifier/user.d
 MOZ_LIBDIR=/usr/lib/Cyberfox
 MOZ_APP_NAME=cyberfox
 MOZ_PKG_NAME=cyberfox
-APT_FILE="/etc/apt/sources.list.d/cyberfox-release.list"
-CYBERFOX_REPO="https://hawkeye116477.github.io/cyberfox-deb\/"
-
-available()
-{
-        command -v "$1" >/dev/null 2>&1
-}
-
-case "$1" in
-    configure)
-        db_get cyberfox-release/add-deb-source
-        if [ "$RET" = true ]; then
-            if [ ! -f $APT_FILE ]; then
-                cat > $APT_FILE <<EOF
-# This file makes sure that Cyberfox Web Browser is kept up-to-date
-# as part of regular system upgrades
-
-deb https://hawkeye116477.github.io/cyberfox-deb/ release main #Cyberfox Web Browser (final releases) 
-
-EOF
-            else
-                sed -i "s/deb http:\/\/$CYBERFOX_REPO release main/deb https\/\/:$CYBERFOX_REPO release main/g" $APT_FILE
-            fi
-            if [ -d /etc/update-manager -a ! -f /etc/update-manager/release-upgrades.d/cyberfox-release.cfg ]; then
-                mkdir -p /etc/update-manager/release-upgrades.d
-                cat >/etc/update-manager/release-upgrades.d/cyberfox-release.cfg <<EOF
-# Added by hawkeye116477 to prevent disabling of 
-# https://hawkeye116477.github.io/cyberfox-deb sources on distribution release upgrade.
-[ThirdPartyMirrors]
-cyberfox/cyberfox-release=https://hawkeye116477.github.io/cyberfox-deb/ release main
-EOF
-            fi
-        fi
-
-        if [ ! -f /etc/cron.daily/cyberfox ]; then
-            cat > /etc/cron.daily/cyberfox << EOF
-#!/bin/sh
-
-if [ -z "\`which apt-key\`" ]; then
-  exit 0
-fi
-
-curl https://hawkeye116477.github.io/cyberfox-deb/public.key | apt-key add - > /dev/null 2>&1
-
-chmod 755 /etc/cron.daily/cyberfox
-            # Run once now to add Cyberfox's pgp key to apt's keyring
-            /etc/cron.daily/cyberfox > /dev/null 2>&1
-        fi
 
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-remove" ] ; then
     update-alternatives --install /usr/bin/gnome-www-browser \
