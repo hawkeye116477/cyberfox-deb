@@ -1,18 +1,146 @@
 #!/bin/sh
 
-set -e
+APP_NAME=cyberfox
 
-UPDATENOTIFIERDIR=/var/lib/update-notifier/user.d
-MOZ_LIBDIR=/usr/lib/Cyberfox
-MOZ_APP_NAME=cyberfox
-MOZ_PKG_NAME=cyberfox
 
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-remove" ] ; then
     update-alternatives --install /usr/bin/gnome-www-browser \
-        gnome-www-browser /usr/bin/$MOZ_APP_NAME 40
+        gnome-www-browser /usr/bin/$APP_NAME 40
 
     update-alternatives --install /usr/bin/x-www-browser \
-        x-www-browser /usr/bin/$MOZ_APP_NAME 40
+        x-www-browser /usr/bin/$APP_NAME 40
 fi
 
+# sources.list setting for Cyberfox updates.
+REPOCONFIG="deb https://hawkeye116477.github.io/cyberfox-deb release main/"
+
+SOURCES_PREAMBLE="### THIS FILE IS AUTOMATICALLY CONFIGURED ###
+# You may comment out this entry, but any other modifications may be lost.\n"
+
+APT_CONFIG="`which apt-config 2> /dev/null`"
+
+# Install the repository signing key
+install_key() {
+  APT_KEY="`which apt-key 2> /dev/null`"
+  if [ -x "$APT_KEY" ]; then
+    "$APT_KEY" add - >/dev/null 2>&1 <<KEYDATA
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1
+
+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
+SWAF5FbPuR+FYVECYfWrlM8=
+=YtlE
+-----END PGP PUBLIC KEY BLOCK-----
+KEYDATA
+  fi
+}
+
+# Parse apt configuration and return requested variable value.
+apt_config_val() {
+  APTVAR="$1"
+  if [ -x "$APT_CONFIG" ]; then
+    "$APT_CONFIG" dump | sed -e "/^$APTVAR /"'!d' -e "s/^$APTVAR \"\(.*\)\".*/\1/"
+  fi
+}
+
+# Set variables for the locations of the apt sources lists.
+find_apt_sources() {
+  APTDIR=$(apt_config_val Dir)
+  APTETC=$(apt_config_val 'Dir::Etc')
+  APT_SOURCES="$APTDIR$APTETC$(apt_config_val 'Dir::Etc::sourcelist')"
+  APT_SOURCESDIR="$APTDIR$APTETC$(apt_config_val 'Dir::Etc::sourceparts')"
+}
+
+# Add the Cyberfox repository to the apt sources.
+# Returns:
+# 0 - sources list was created
+# 2 - error
+create_sources_lists() {
+  if [ ! "$REPOCONFIG" ]; then
+    return 0
+  fi
+
+  find_apt_sources
+
+  SOURCELIST="$APT_SOURCESDIR/cyberfox-release-hawkeye116477.list"
+
+  # Check if the correct repository configuration is in there.
+  REPOMATCH=$(grep "^[[:space:]#]*\b$REPOCONFIG\b" "$SOURCELIST" \
+    2>/dev/null)
+
+  # Don't do anything if the file is there, since that probably means
+  # we have already installed it
+  if [ -r "$SOURCELIST" ]; then
+    if [ ! "$REPOMATCH" ]; then
+        # At this point wrong configuration is active. In that case,
+        # just abandon the mess and recreate the file
+        # with the correct configuration.
+        printf "$SOURCES_PREAMBLE" > "$SOURCELIST"
+        printf "$REPOCONFIG\n" >> "$SOURCELIST"
+
+        if [ $? -eq 0 ]; then
+            return 0
+        fi
+        return 2
+    fi
+  fi
+
+  if [ -d "$APT_SOURCESDIR" ]; then
+    printf "$SOURCES_PREAMBLE" > "$SOURCELIST"
+    printf "$REPOCONFIG\n" >> "$SOURCELIST"
+    if [ $? -eq 0 ]; then
+      return 0
+    fi
+  fi
+  return 2
+}
+
+## MAIN ##
+install_key
+create_sources_lists
 #DEBHELPER#

@@ -75,6 +75,7 @@ chmod  755 $Dir/tmp/cyberfox-$VERSION/debian/cyberfox.prerm
 chmod  755 $Dir/tmp/cyberfox-$VERSION/debian/cyberfox.postinst
 chmod 755 $Dir/tmp/cyberfox-$VERSION/debian/rules
 chmod 755 $Dir/tmp/cyberfox-$VERSION/debian/Cyberfox.sh
+chmod  755 $Dir/tmp/cyberfox-$VERSION/debian/cyberfox.postrm
 
 
 # Linux has hunspell dictionaries, so we can remove Cyberfox dictionaries and make symlink to Linux dictionaries. 
