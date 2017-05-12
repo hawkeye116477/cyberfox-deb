@@ -16,7 +16,7 @@ set -e
 #  hawkeye116477 <hawkeye116477@gmail.com>
 # License: GPLv2 or later
 
-MOZ_LIBDIR=/opt/Cyberfox
+MOZ_LIBDIR=/opt/cyberfox
 MOZ_APP_LAUNCHER=`which $0`
 MOZ_APP_NAME=cyberfox
 

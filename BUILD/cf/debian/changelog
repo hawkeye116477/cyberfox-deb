@@ -1,4 +1,4 @@
-cyberfox (52.1.0) xenial; urgency=medium
+cyberfox (__VERSION__) xenial; urgency=medium
 
   * Changelog is here ---> __CHANGELOG__ 
 

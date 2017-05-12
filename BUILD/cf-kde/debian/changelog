@@ -1,4 +1,4 @@
-cyberfox-kde (52.1.0) xenial; urgency=medium
+cyberfox-kde (__VERSION__) xenial; urgency=medium
 
   * Changelog is here ---> __CHANGELOG__ 
 

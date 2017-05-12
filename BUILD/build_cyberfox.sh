@@ -20,7 +20,7 @@ fi
 
 # Get package version.
 if [ ! -d "$Dir/tmp/version" ]; then 
-mkdir $Dir/tmp/version
+mkdir -p $Dir/tmp/version
 cd $Dir/tmp/version
 wget https://raw.githubusercontent.com/InternalError503/cyberfox/master/browser/config/version_display.txt
 fi
@@ -49,14 +49,16 @@ fi
 
 # Copy latest build
 	cd $Dir/tmp/cyberfox-$VERSION
-	wget https://sourceforge.net/projects/cyberfox/files/Zipped%20Format/Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
-	mv ./Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2 ./cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
-	tar jxf cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
+	cp -r ~/git/obj64/dist/Cyberfox/ $Dir/tmp/cyberfox-$VERSION/
+	mv $Dir/tmp/cyberfox-$VERSION/Cyberfox $Dir/tmp/cyberfox-$VERSION/cyberfox
+	#wget https://sourceforge.net/projects/cyberfox/files/Zipped%20Format/Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
+	#mv ./Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2 ./cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
+	# tar jxf cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
 	if [ -d "$Dir/tmp/cyberfox-$VERSION/cyberfox" ]; then
-	rm -rf $Dir/tmp/cyberfox-$VERSION/README.txt
+	#rm -rf $Dir/tmp/cyberfox-$VERSION/README.txt
 	mv $Dir/tmp/cyberfox-$VERSION/cyberfox/Cyberfox $Dir/tmp/cyberfox-$VERSION/cyberfox/cyberfox
 	mv $Dir/tmp/cyberfox-$VERSION/cyberfox/Cyberfox-bin $Dir/tmp/cyberfox-$VERSION/cyberfox/cyberfox-bin
-	mv $Dir/tmp/cyberfox-$VERSION/Cyberfox/browser/features $Dir/tmp/cyberfox-$VERSION
+	mv $Dir/tmp/cyberfox-$VERSION/cyberfox/browser/features $Dir/tmp/cyberfox-$VERSION
 else
     echo "Unable to Cyberfox package files, Please check the build was created and packaged successfully!"
     exit 1     
@@ -66,6 +68,8 @@ fi
 # Generate change log template
 CHANGELOGDIR=$Dir/tmp/cyberfox-$VERSION/debian/changelog
 if grep -q -E "__VERSION__|__CHANGELOG__|__TIMESTAMP__" "$CHANGELOGDIR" ; then
+    sed -i "s|__VERSION__|$VERSION|" "$CHANGELOGDIR"
+
     sed -i "s|__CHANGELOG__|https://cyberfox.8pecxstudios.com/hooray-your-cyberfox-is-up-to-date/?version=$VERSION|" "$CHANGELOGDIR"
     DATE=$(date --rfc-2822)
     sed -i "s|__TIMESTAMP__|$DATE|" "$CHANGELOGDIR"
@@ -96,5 +100,5 @@ else
    exit 1
 fi
 
-notify-send "Deb & PPA complete!"
+notify-send "Deb package for APT repository complete!"
 finalCleanUp
