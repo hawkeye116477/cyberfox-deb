@@ -63,7 +63,7 @@ fi
 
 # Copy latest build
     cd $Dir/tmp_kde/cyberfox-kde-$VERSION
-    cp -r ~/Dokumenty/obj64/dist/Cyberfox/ $Dir/tmp_kde/cyberfox-kde-$VERSION/
+    cp -r ~/git/obj64/dist/Cyberfox/ $Dir/tmp_kde/cyberfox-kde-$VERSION/
     mv $Dir/tmp_kde/cyberfox-kde-$VERSION/Cyberfox $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox
     if [ -d "$Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox" ]; then
     mv $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/Cyberfox $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/cyberfox
@@ -71,8 +71,8 @@ fi
     
     # Features are in packages cyberfox-locale-*, cyberfox-ext-*, so are not needed
 	rm -rf $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/browser/features
-	# Remove kyberfoxhelper. We will move it to another package
-	rm -rf $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/kyberfoxhelper
+	# Remove kcyberfoxhelper. We will move it to another package
+	rm -rf $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/kcyberfoxhelper
 else
     echo "Unable to Cyberfox KDE Plasma Edition package files, Please check the build was created and packaged successfully!"
     exit 1     
@@ -88,6 +88,10 @@ chmod 755 $Dir/tmp_kde/cyberfox-kde-$VERSION/debian/cyberfox.sh
 # Thanks to this, we don't have to download dictionary from AMO for our language.
 # Symlinks are now in cyberfox.links file, so this fixes "Unsafe symlink" message.
 rm -rf $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/dictionaries
+
+# Remove unneeded files
+rm -rf $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/SHA512SUMS.chk
+rm -rf $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/removed-files
 
 # Build .deb package (Requires devscripts to be installed sudo apt install devscripts)
 notify-send "Building deb package!"
