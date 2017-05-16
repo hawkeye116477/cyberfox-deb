@@ -62,12 +62,9 @@ fi
 
 
 # Copy latest build
-    cd $Dir/tmp_kde/cyberfox-kde-$VERSION
-    cp -r ~/git/obj64/dist/Cyberfox/ $Dir/tmp_kde/cyberfox-kde-$VERSION/
-    mv $Dir/tmp_kde/cyberfox-kde-$VERSION/Cyberfox $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox
+
+    cp -r ~/git/obj64/dist/cyberfox/ $Dir/tmp_kde/cyberfox-kde-$VERSION/
     if [ -d "$Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox" ]; then
-    mv $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/Cyberfox $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/cyberfox
-    mv $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/Cyberfox-bin $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/cyberfox-bin
     
     # Features are in packages cyberfox-locale-*, cyberfox-ext-*, so are not needed
 	rm -rf $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/browser/features
@@ -95,6 +92,7 @@ rm -rf $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/removed-files
 
 # Build .deb package (Requires devscripts to be installed sudo apt install devscripts)
 notify-send "Building deb package!"
+cd $Dir/tmp_kde/cyberfox-kde-$VERSION
 debuild -us -uc -d
 
 if [ -f $Dir/tmp_kde/cyberfox-kde_${VERSION}_amd64.deb ]; then
