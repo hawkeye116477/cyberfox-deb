@@ -49,15 +49,10 @@ fi
 
 # Copy latest build
 	cd $Dir/tmp/cyberfox-$VERSION
-	cp -r ~/git/obj64/dist/Cyberfox/ $Dir/tmp/cyberfox-$VERSION/
-	mv $Dir/tmp/cyberfox-$VERSION/Cyberfox $Dir/tmp/cyberfox-$VERSION/cyberfox
-	#wget https://sourceforge.net/projects/cyberfox/files/Zipped%20Format/Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
-	#mv ./Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2 ./cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
-	# tar jxf cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
+	wget https://sourceforge.net/projects/cyberfox/files/Zipped%20Format/Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
+	tar jxf Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
 	if [ -d "$Dir/tmp/cyberfox-$VERSION/cyberfox" ]; then
-	#rm -rf $Dir/tmp/cyberfox-$VERSION/README.txt
-	mv $Dir/tmp/cyberfox-$VERSION/cyberfox/Cyberfox $Dir/tmp/cyberfox-$VERSION/cyberfox/cyberfox
-	mv $Dir/tmp/cyberfox-$VERSION/cyberfox/Cyberfox-bin $Dir/tmp/cyberfox-$VERSION/cyberfox/cyberfox-bin
+	rm -rf $Dir/tmp/cyberfox-$VERSION/README.txt
 	mv $Dir/tmp/cyberfox-$VERSION/cyberfox/browser/features $Dir/tmp/cyberfox-$VERSION
 else
     echo "Unable to Cyberfox package files, Please check the build was created and packaged successfully!"
