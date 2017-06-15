@@ -32,10 +32,6 @@ if [ ! -d "$Dir/tmp/kcyberfoxhelper-$VERSION" ]; then
     mkdir $Dir/tmp/kcyberfoxhelper-$VERSION
 fi
 
-# Copy latest build
-wget -O $Dir/tmp/kcyberfoxhelper-$VERSION/kcyberfoxhelper https://github.com/hawkeye116477/kcyberfoxhelper/releases/download/v${VERSION}/kcyberfoxhelper
-wget -O $Dir/tmp/kcyberfoxhelper-$VERSION/kcyberfoxhelper.notifyrc https://github.com/hawkeye116477/kcyberfoxhelper/raw/master/kcyberfoxhelper.notifyrc
-
 # Copy deb templates
 if [ -d "$Dir/kcyberfoxhelper/debian" ]; then
 	cp -r $Dir/kcyberfoxhelper/debian/ $Dir/tmp/kcyberfoxhelper-$VERSION/
@@ -56,9 +52,19 @@ else
     exit 1  
 fi
 
+# Change version in postinst script
+POSTINST=$Dir/tmp/kcyberfoxhelper-$VERSION/debian/kcyberfoxhelper.postinst
+if grep -q -E "__VERSION__|" "$POSTINST" ; then
+    sed -i "s|__VERSION__|$VERSION|" "$POSTINST"
+else
+    echo "An error occured when trying to change version in postinst script!"
+    exit 1  
+fi
+
 # Make sure correct permissions are set
 chmod 755 $Dir/tmp/kcyberfoxhelper-$VERSION/debian/rules
-chmod 777 $Dir/tmp/kcyberfoxhelper-$VERSION/kcyberfoxhelper
+chmod  755 $Dir/tmp/kcyberfoxhelper-$VERSION/debian/kcyberfoxhelper.prerm
+chmod  755 $Dir/tmp/kcyberfoxhelper-$VERSION/debian/kcyberfoxhelper.postinst
 
 # Build .deb package
 notify-send "Building deb package!"
