@@ -62,7 +62,6 @@ fi
 
 
 # Copy latest build
-
     cp -r ~/git/obj64/dist/cyberfox/ $Dir/tmp_kde/cyberfox-kde-$VERSION/
     if [ -d "$Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox" ]; then
     
@@ -79,11 +78,10 @@ fi
 chmod  755 $Dir/tmp_kde/cyberfox-kde-$VERSION/debian/cyberfox-kde.prerm
 chmod  755 $Dir/tmp_kde/cyberfox-kde-$VERSION/debian/cyberfox-kde.postinst
 chmod  755 $Dir/tmp_kde/cyberfox-kde-$VERSION/debian/rules
-chmod 755 $Dir/tmp_kde/cyberfox-kde-$VERSION/debian/cyberfox.sh
+chmod 755 $Dir/tmp_kde/cyberfox-kde-$VERSION/debian/wrapper/cyberfox
 
 # Linux has hunspell dictionaries, so we can remove Cyberfox dictionaries and make symlink to Linux dictionaries. 
 # Thanks to this, we don't have to download dictionary from AMO for our language.
-# Symlinks are now in cyberfox.links file, so this fixes "Unsafe symlink" message.
 rm -rf $Dir/tmp_kde/cyberfox-kde-$VERSION/cyberfox/dictionaries
 
 # Remove unneeded files

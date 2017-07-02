@@ -3,6 +3,7 @@
 # Set current directory to script directory.
 Dir=$(cd "$(dirname "$0")" && pwd)
 cd $Dir
+
 # Init vars
 VERSION=""
 
@@ -47,19 +48,6 @@ else
     exit 1 
 fi
 
-# Copy latest build
-	cd $Dir/tmp/cyberfox-$VERSION
-	wget https://sourceforge.net/projects/cyberfox/files/Zipped%20Format/Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
-	tar jxf Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
-	if [ -d "$Dir/tmp/cyberfox-$VERSION/cyberfox" ]; then
-	rm -rf $Dir/tmp/cyberfox-$VERSION/README.txt
-	mv $Dir/tmp/cyberfox-$VERSION/cyberfox/browser/features $Dir/tmp/cyberfox-$VERSION
-else
-    echo "Unable to Cyberfox package files, Please check the build was created and packaged successfully!"
-    exit 1     
-fi
-
-
 # Generate change log template
 CHANGELOGDIR=$Dir/tmp/cyberfox-$VERSION/debian/changelog
 if grep -q -E "__VERSION__|__CHANGELOG__|__TIMESTAMP__" "$CHANGELOGDIR" ; then
@@ -73,16 +61,31 @@ else
     exit 1  
 fi
 
+# Copy latest build
+	cd $Dir/tmp/cyberfox-$VERSION
+	wget https://sourceforge.net/projects/cyberfox/files/Zipped%20Format/Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
+	tar jxf Cyberfox-$VERSION.en-US.linux-x86_64.tar.bz2
+	if [ -d "$Dir/tmp/cyberfox-$VERSION/cyberfox" ]; then
+	rm -rf $Dir/tmp/cyberfox-$VERSION/README.txt
+	mv $Dir/tmp/cyberfox-$VERSION/cyberfox/browser/features $Dir/tmp/cyberfox-$VERSION
+else
+    echo "Unable to Cyberfox package files, Please check the build was created and packaged successfully!"
+    exit 1     
+fi
+
 # Make sure correct permissions are set
 chmod 755 $Dir/tmp/cyberfox-$VERSION/debian/cyberfox.prerm
 chmod 755 $Dir/tmp/cyberfox-$VERSION/debian/cyberfox.postinst
 chmod 755 $Dir/tmp/cyberfox-$VERSION/debian/rules
-chmod 755 $Dir/tmp/cyberfox-$VERSION/debian/cyberfox.sh
-
+chmod 755 $Dir/tmp/cyberfox-$VERSION/debian/wrapper/cyberfox
 
 # Linux has hunspell dictionaries, so we can remove Cyberfox dictionaries and make symlink to Linux dictionaries. 
 # Thanks to this, we don't have to download dictionary from AMO for our language.
 rm -rf $Dir/tmp/cyberfox-$VERSION/cyberfox/dictionaries
+
+# Remove unneeded files
+rm -rf $Dir/tmp/cyberfox-$VERSION/cyberfox/SHA512SUMS.chk
+rm -rf $Dir/tmp/cyberfox-$VERSION/cyberfox/removed-files
 
 # Build .deb package (Requires devscripts to be installed sudo apt install devscripts). Arch and based Linux needs -d flag.
 notify-send "Building deb package!"
